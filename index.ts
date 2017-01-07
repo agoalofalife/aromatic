@@ -4,18 +4,17 @@ import ObserverParseValuesWithPoint from './src/Observers/ObserverParseValuesWit
 
 let node = document.querySelector('#test');
 
-let testData   = {
-    html : 'test',
-    rest : {
-        rest2 : '23',
-        rest3 : {
-            re : '!!!!'
-        }
-    }
+let context = {
+    title: "My First Blog Post!",
+    author: {
+        id: 47,
+        name: "Yehuda Katz"
+    },
+    body: "My first post. Wheeeee!"
 };
 
 let template = new Template(node.innerHTML);
-    template.loadObject(testData);
+    template.loadObject(context);
 
 template.attach(new ObserverParseValues());
 template.attach(new ObserverParseValuesWithPoint());

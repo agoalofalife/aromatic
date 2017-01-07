@@ -24,22 +24,24 @@ class ObserverParseValuesWithPoint implements TemplateObserver{
                 if ( lastIndex !== undefined ) {
                     // if in lastIndex have point , we need to normalize
                     if ( /\./.test(lastIndex) ) {
-                        lastIndex =  this.normalizeProperty(lastIndex);
+                        let currentObject =  this.normalizeProperty(lastIndex);
+                        this.template.setTemplate(this.template.getTemplate().replace(new RegExp(`{{${lastIndex}.${value}}}`, 'g'), currentObject[value] ));
+                    } else {
+                        this.template.setTemplate(this.template.getTemplate().replace(new RegExp(`{{${lastIndex}.${value}}}`, 'g'), this.template.getData()[lastIndex][value] ));
                     }
-
-                    console.log( this.template.getData() ,lastIndex,'lastIndex');
-                    // console.log( lastIndex,value,'lastIndex' );
-                    // this.template.setTemplate(this.template.getTemplate().replace(new RegExp(`{{ ${lastIndex}.${value} }}`, 'g'), this.template.getData()[lastIndex][value] ));
-                    // console.log( this.template.getData()[lastIndex][value] );
                 }
             }
         }
     }
-    normalizeProperty(property) {
+    normalizeProperty(property : string) : Object{
 
-        let temp : string = '';
-        property.split('.').forEach( item => {
-            temp += `[${item}]`;
+        let temp : any = '';
+        property.split('.').forEach( (item, key) => {
+            if ( key === 0) {
+                temp = this.template.getData()[item];
+            } else {
+                temp =  temp[item];
+            }
         });
 
         return temp;
