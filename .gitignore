@@ -1,0 +1,5 @@
+node_modules
+*.js
+!_*.js
+.idea
+*.js.map

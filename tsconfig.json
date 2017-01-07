@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false
+  }
+}
+
+//{
+//  "compileOnSave": true,
+//  "compilerOptions": {
+//    "module": "es6",
+//    "target": "es6",
+//    "moduleResolution": "node",
+//  "allowSyntheticDefaultImports": true,
+//    "noImplicitAny": true,
+//    "sourceMap": true,
+//    "outDir": "ts-build", "jsx": "preserve" },
+//  "exclude": [ "node_modules" ]
+//}
