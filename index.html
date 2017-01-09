@@ -13,6 +13,36 @@
         <div class="body">
             {{body}}
         </div>
+        {{#each updates}}
+        <li>
+            <h2>{{name}}</h2>
+            <p>{{update}}</p>
+            <span>
+         Sent From: {{from}}
+         {{#if location}}
+
+	    - In: {{location}}</span>
+            {{#else}}
+            - erere: {{location}}</span>
+            {{/if}}
+            </span>
+        </li>
+        {{/each}}
+        <div class="body">
+            {{body}}
+        </div>
+        {{#each finish}}
+        <li>
+            <h2>{{name}}</h2>
+            <p>{{update}}</p>
+            <span>
+         Sent From: {{from}}
+         {{#if location}}
+	    - In: {{location}}</span>
+            {{/if}}
+            </span>
+        </li>
+        {{/each}}
     </div>
 </div>
 <script src="index.js"></script>
