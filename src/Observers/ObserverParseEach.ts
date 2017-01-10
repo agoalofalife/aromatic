@@ -6,6 +6,11 @@ class ObserverParseEach implements TemplateObserver{
     baseString       : string;
     currentTemplate  : string   = '';
     collectionClaims : Object[] = []; // an array of claims
+    templateBrackets : string[] = ['{{', '}}'];
+    collection       : Object[] = [];
+    stringBundler    : string   = '';
+    toggleIf         : boolean  = true;
+    namesEach        : string[] = [];
 
     update() {
         let normalizeText          = this.normalizeText();
@@ -15,11 +20,112 @@ class ObserverParseEach implements TemplateObserver{
 
         // through all each in global string
         arrayEach.forEach( stringEach => {
-            this.parse(stringEach);
+            // this.parse(stringEach);
+
+            // to parse the array of values
+            this.parseEach(stringEach);
+
+            this.namesEach.push(stringEach.match('{{#each (.*?)}}')[1].trim());
+
         });
 
+        this.namesEach.forEach( name => {
+           if (  this.template.getData()[name] !== undefined ) {
+               this.template.getData()[name].forEach( objectData => {
+                   this.join(objectData);
+               })
+           }
+        });
+
+        this.template.setTemplate(this.stringBundler); //???
+
+        console.log( this.stringBundler );
+    }
+
+    parseEach(stringEach : string) {
+        stringEach                = this.cutBaseTemplate(stringEach);
+
+        while( stringEach.length ) {
+            let partText          = stringEach.substr(0, stringEach.search(this.templateBrackets[0]));
+            stringEach            = stringEach.substr(stringEach.search(this.templateBrackets[0]));
+
+            this.addCollection({
+                type  : 'text',
+                value : partText
+            });
+
+
+            let partBrackets      = stringEach.substr(0, stringEach.search(this.templateBrackets[1]) + 2);
+            stringEach            = stringEach.substr(stringEach.search(this.templateBrackets[1])+ 2);
+            this.addCollection({
+                type  : this.GetType(partBrackets),
+                value : partBrackets
+            });
+        }
 
     }
+
+
+    join(data : Object){
+        for (let element in this.collection) {
+            switch (this.collection[element]['type']){
+                case 'text' :
+                    this.stringBundler += this.collection[element]['value'].trim();
+                    break;
+                case 'name' :
+                    if ( this.toggleIf === true ) {
+                        this.stringBundler +=  data[this.collection[element]['value'].match('[A-z]{1,}').shift()];
+                    }
+                    break;
+                case 'if'   :
+                    let ifName = this.collection[element]['value'].match('{{#if ([A-z]{1,})}}')[1];
+                    if ( data[ifName] !== undefined ) {
+                        this.toggleIf = true;
+                    } else {
+                        this.toggleIf = false;
+                    }
+
+                    break;
+                case 'else' :
+                    if ( this.toggleIf === true ) {
+
+                        // вырезать else и то что после иначе вставить
+                    }
+                    break;
+                case 'if-close' :
+                    // ... наверное ничего не вставлять
+                    break;
+            }
+        }
+    }
+
+    // to add a new item to collection
+    addCollection(newObject : Object){
+        this.collection.push(newObject);
+    }
+
+
+    GetType(brackets : string){
+
+        if ( new RegExp('{{#if [A-z]{1,}', 'g').test(brackets)) {
+            return 'if';
+        }
+
+        if ( new RegExp('{{#else}}', 'g').test(brackets)) {
+            return 'else';
+        }
+        if ( new RegExp('{{/if}}', 'g').test(brackets)) {
+            return 'if-close';
+        }
+
+        if ( new RegExp('{{[A-z]{1,}', 'g').test(brackets) ) {
+            return 'name';
+        }
+        if ( new RegExp('.+', 'g').test(brackets) ) {
+            return 'text';
+        }
+    }
+
 
     parse(allMatches : string) {
 
