@@ -27,31 +27,55 @@ class ObserverParseEach implements TemplateObserver{
 
         this.parseIfElse(ifElseString);
 
-        let nameArray       = allMatches.match('{{#each (.*?)}}')[1].trim();
-        let each            = this.template.getData()[nameArray];
+        let nameEach               = allMatches.match('{{#each (.*?)}}')[1].trim();
 
-        this.baseString     = this.cutBaseTemplate(allMatches);
+        // the data corresponding to the current {{#each something}}
+        let dataForEach            = this.template.getData()[nameEach];
 
-        for (let arr in each) {
+        this.baseString            = this.cutBaseTemplate(allMatches);
+
+        for (let arr in dataForEach) {
             // copy template for insert current iteration
             let temp : string = this.baseString;
 
-            var test : string;
-            for (let item in each[arr]) {
-                temp = temp.replace(new RegExp(`{{${item}}}`, 'g'), each[arr][item]);
+            for (let item in dataForEach[arr]) {
 
-                this.collectionClaims.forEach( objectiIf => {
-                    if ( objectiIf['if'] === item ) {
-                        temp =   temp.replace(new RegExp(`{{#if ${item}}}`, 'g'), '');
-                        // temp =   temp.replace(new RegExp(`{{#if ${item}}}.+{{${item}}}`, 'g'), each[arr][item]);
+                // temp = temp.replace(new RegExp(`{{${item}}}`, 'g'), dataForEach[arr][item]);
+
+
+                this.collectionClaims.forEach( (objectiIf, key, linkArray) => {
+
+                    if ( dataForEach[arr][objectiIf['if']] !== undefined ) {
+
                     }
+
+
+
+                    // if ( objectiIf['if'] === item ) {
+                    //     temp =  temp.replace(  new RegExp(`{{#if [A-z]{1,}}}.+{{([A-z]{1,})}}.+{{#else}}|{{\/if}}`, 'g'), function (a, inGroup) {
+                    //      console.log( a );
+                    //         if ( inGroup !== undefined ) {
+                    //             return dataForEach[arr][item];
+                    //         }
+                    //     });
+                    //
+                    //
+                    //
+                    //     // temp.replace(  new RegExp(`{{#if [A-z]{1,}}}.+{{([A-z]{1,})}}.+{{#else}}|{{\/if}}`, 'g'),'$1');
+                    //     // console.log(temp ,'temp' );
+                    //     temp =   temp.replace(new RegExp(`{{#if ${item}}}`, 'g'), '');
+                    //     temp =   temp.replace(new RegExp('({{#else}}.+{{/if}})', 'g'), '');
+                    //
+                    //     linkArray.slice(key,1);
+                    //     // console.log( linkArray );
+                    // }
                 });
             }
             this.currentTemplate +=  temp;
 
         }
 
-        console.log(  this.currentTemplate );
+        // console.log(  this.currentTemplate ,'currentTemplate');
     }
 
     // put template {{#each * }} and {{/each}}
