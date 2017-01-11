@@ -1,5 +1,7 @@
 import TemplateObserver from '../Interfaces/TemplateObserver';
 import Template from '../Template';
+import entityMap from '../Maps/EntityMap';
+
 
 class ObserverParseEach implements TemplateObserver{
     template         : Template;
@@ -11,6 +13,7 @@ class ObserverParseEach implements TemplateObserver{
     stringBundler    : string   = '';
     toggleIf         : boolean  = true;
     namesEach        : string[] = [];
+
 
     update() {
         let normalizeText          = this.normalizeText();
@@ -73,12 +76,15 @@ class ObserverParseEach implements TemplateObserver{
                     this.stringBundler += this.collection[element]['value'].trim();
                     break;
                 case 'name' :
-                    if ( this.toggleIf === true ) {
-                        this.stringBundler +=  data[this.collection[element]['value'].match('[A-z]{1,}').shift()];
+                    let value = data[this.collection[element]['value'].match('[A-z]{1,}').shift()];
+
+                    if ( this.toggleIf === true && value !== undefined ) {
+                        this.stringBundler +=  this.escapeHtml(value);
                     }
                     break;
                 case 'if'   :
                     let ifName = this.collection[element]['value'].match('{{#if ([A-z]{1,})}}')[1];
+
                     if ( data[ifName] !== undefined ) {
                         this.toggleIf = true;
                     } else {
@@ -87,13 +93,12 @@ class ObserverParseEach implements TemplateObserver{
 
                     break;
                 case 'else' :
-                    if ( this.toggleIf === true ) {
-
-                        // вырезать else и то что после иначе вставить
+                    if ( this.toggleIf === false ) {
+                        this.toggleIf = true;
                     }
                     break;
                 case 'if-close' :
-                    // ... наверное ничего не вставлять
+                    this.toggleIf = true;
                     break;
             }
         }
@@ -214,6 +219,14 @@ class ObserverParseEach implements TemplateObserver{
     // removes all spaces from text
     normalizeText() : string {
         return this.template.getTemplate().replace(/\s{2,}/g, '');
+    }
+
+
+    // escape Html
+    escapeHtml(html : string) {
+        return String(html).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+            return entityMap[s];
+        });
     }
 
     setTemplate(template : Template) {
