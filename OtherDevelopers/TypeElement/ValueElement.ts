@@ -11,7 +11,8 @@ class ValueElement extends Element implements ITypeElement{
         let attachedProperties   =  valueInBrackets.split('.');
         let endResult : any;
 
-        if ( this.toggle === true && attachedProperties !== undefined) {
+
+        if ( this.Parser.getToggle() === true && attachedProperties !== undefined && this.Parser.getToggleEach() === false) {
 
             if ( attachedProperties.length > 1 ) {
                 let buidDeepObject = this.Data.getStartData();
@@ -22,9 +23,20 @@ class ValueElement extends Element implements ITypeElement{
             } else {
                 endResult = this.Data.getStartData()[attachedProperties.shift()];
             }
+            return escapeHtml(endResult);
         }
 
-        return escapeHtml(endResult);
+        if ( this.Parser.getToggleEach() === true ) {
+
+            let startLabel = this.Data.getStartData()[this.Parser.getLastLabelData()]; // maybe undefined
+
+            if (startLabel !== undefined){
+                endResult = startLabel[0][attachedProperties.shift()];
+            } else {
+                endResult = '';
+            }
+        }
+        return endResult;
     }
 
 }

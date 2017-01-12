@@ -4,8 +4,9 @@ import ITypeElement from '../Interfaces/ITypeElement';
 
 class ElseElement extends Element implements ITypeElement{
     transform(){
-        if ( this.toggle === false ) {
-            this.toggle = true;
+
+        if ( this.Parser.getToggle() === false ) {
+            this.Parser.setToggleEach( true );
         }
         return '';
     }

@@ -4,6 +4,8 @@ import ValueElement from './TypeElement/ValueElement';
 import IfElement from './TypeElement/IfElement';
 import ElseElement from './TypeElement/ElseElement'
 import IfCloseElement from './TypeElement/IfCloseElement';
+import EachElement from './TypeElement/EachElement';
+import EachElementClose from './TypeElement/EachElementClose';
 import TextElement from './TypeElement/TextElement';
 import Data from './Data';
 
@@ -13,9 +15,11 @@ class Parser{
     private htmlParsing        : string;
     private collectionElements : Object[] = [];
     private templateBrackets   : string[] = ['{{', '}}'];
-    // private currentContext     : string;
     private DataLink           : Data;
     private OutHtml            : string = '';
+    protected toggle           : boolean = true;
+    protected toggleEach       : boolean = false;
+    protected lastLabelData    : string;
 
     constructor(html : string, dataClient : Object){
         this.html         =  normalizeHtml(html);
@@ -25,7 +29,6 @@ class Parser{
 
 
     parsingHtml(){
-
         while( this.htmlParsing.length) {
             let partString              = this.htmlParsing.substr( 0, this.htmlParsing.search(this.templateBrackets[0]) );
             this.htmlParsing            = this.htmlParsing.substr( this.htmlParsing.search(this.templateBrackets[0]) );
@@ -33,7 +36,6 @@ class Parser{
             if (TypeTextElement !== undefined ) {
                 this.collectionElements.push(TypeTextElement);
             }
-
 
             let partBrackets      = this.htmlParsing.substr(0, this.htmlParsing.search(this.templateBrackets[1]) + 2);
             this.htmlParsing      = this.htmlParsing.substr(this.htmlParsing.search(this.templateBrackets[1])+ 2);
@@ -45,7 +47,7 @@ class Parser{
 
         }
 
-        // console.log(  this.collectionElements );
+        console.log(  this.collectionElements );
     }
 
     factoryString(string : string) : ITypeElement{
@@ -60,7 +62,12 @@ class Parser{
         if ( new RegExp('{{/if}}', 'g').test(string)) {
             return new IfCloseElement(string, this, this.DataLink);
         }
-
+        if ( new RegExp('{{#each [A-z]{1,}', 'g').test(string)) {
+            return new EachElement(string, this, this.DataLink);
+        }
+        if ( new RegExp('{{/each}}', 'g').test(string)) {
+            return new EachElementClose(string, this, this.DataLink);
+        }
         if ( new RegExp('{{[A-z]{1,}', 'g').test(string) ) {
             return new ValueElement(string, this, this.DataLink);
         }
@@ -73,17 +80,34 @@ class Parser{
     builderOutHtml(){
 
     this.collectionElements.forEach( item => {
-        // console.log( item );
            this.OutHtml +=  item['transform']();
     });
     console.log( this.OutHtml );
     }
 
-
     public setOutHtml(string : string){
         this.OutHtml = string;
     }
 
+    public getToggle() : boolean{
+        return this.toggle;
+    }
+    public getToggleEach(): boolean{
+        return this.toggleEach;
+    }
+    public getLastLabelData() : string{
+        return this.lastLabelData;
+    }
+
+    public setToogle(bool : boolean) {
+        this.toggle = bool;
+    }
+    public setToggleEach(bool : boolean){
+        this.toggleEach = bool;
+    }
+    public setLastLabelData(string : string){
+        this.lastLabelData = string;
+    }
 }
 
 export default Parser;

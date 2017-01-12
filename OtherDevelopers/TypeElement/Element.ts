@@ -4,7 +4,6 @@ import Data from '../Data';
 
 abstract class Element {
     private originalString     : string;
-    protected toggle           : boolean = true;
     Parser                     : Parser;
     Data                       : Data;
 
