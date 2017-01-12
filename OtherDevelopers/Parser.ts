@@ -9,7 +9,16 @@ import EachElementClose from './TypeElement/EachElementClose';
 import TextElement from './TypeElement/TextElement';
 import Data from './Data';
 
-
+/**
+ * @property html                the input string HTML
+ * @property htmlParsing         copy the input string to parse
+ * @property collectionElements  a collection of objects after parsing  property htmlParsing
+ * @property templateBrackets    template to insert values in HTML
+ * @property DataLink            the reference to the object with current data
+ * @property EachData            the actual data for a bust in loop {{each}}
+ * @property currentCounter      the current iteration is on collectionElements
+ *
+ */
 class Parser{
     private html               : string;
     private htmlParsing        : string;
@@ -20,6 +29,10 @@ class Parser{
     protected toggle           : boolean = true;
     protected toggleEach       : boolean = false;
     protected lastLabelData    : string;
+    protected EachData         : any;
+    protected currentCounter   : number = 0;
+    protected freezeCounter    : number = 0;
+    protected currentDataEach  : any;
 
     constructor(html : string, dataClient : Object){
         this.html         =  normalizeHtml(html);
@@ -47,7 +60,7 @@ class Parser{
 
         }
 
-        console.log(  this.collectionElements );
+        // console.log(  this.collectionElements );
     }
 
     factoryString(string : string) : ITypeElement{
@@ -78,14 +91,44 @@ class Parser{
 
 
     builderOutHtml(){
+    // this.collectionElements.forEach( (item, key, sourceArray) => {
+    //         // if ( this.toggleEach === true ) {
+    //         //     this.LoopForEach(item,key);
+    //         // } else {
+    //         //     this.currentCounter = key;
+    //         //     this.OutHtml +=  item['transform']();
+    //         // }
+    //
+    //     this.OutHtml +=  sourceArray[key]['transform']();
+    //
+    // });
 
-    this.collectionElements.forEach( item => {
-           this.OutHtml +=  item['transform']();
-    });
-    console.log( this.OutHtml );
+
+        while ( this.collectionElements[this.currentCounter] !== undefined ) {
+            this.OutHtml = this.collectionElements[this.currentCounter]['transform']();
+            this.currentCounter++;
+        }
+        // console.log( this.OutHtml );
+        // let step = this.myGenerator();
+        // console.log(step.next() );
+
     }
 
-    public setOutHtml(string : string){
+    // specially for Each
+    LoopForEach(element, key : number){
+        let start : number = key;
+
+        this.OutHtml += this.collectionElements[start]['transform']();
+
+    }
+
+     *myGenerator() {
+         for(let element in this.collectionElements){
+              yield this.collectionElements[element]['transform']();
+         }
+   }
+
+    public setOutHtml(string : string) : void{
         this.OutHtml = string;
     }
 
@@ -98,15 +141,44 @@ class Parser{
     public getLastLabelData() : string{
         return this.lastLabelData;
     }
+    public getEachData() : any {
+        return this.EachData;
+    }
+    public getCurrentCounter() : number{
+        return this.currentCounter;
+    }
+    public getFreezeCounter() : number {
+        return this.freezeCounter;
+    }
 
-    public setToogle(bool : boolean) {
+    public getСurrentDataEach() : any{
+        return this.currentDataEach;
+    }
+
+
+    public setToogle(bool : boolean): void {
         this.toggle = bool;
     }
-    public setToggleEach(bool : boolean){
+    public setToggleEach(bool : boolean): void{
         this.toggleEach = bool;
     }
-    public setLastLabelData(string : string){
+    public setLastLabelData(string : string) : void{
         this.lastLabelData = string;
+    }
+    public setFreezeCounter(number : number){
+        this.freezeCounter = number;
+    }
+    public setCurrentDataEach(currentValues : any){
+        this.currentDataEach = currentValues;
+    }
+    public setCurrentCounter(number : number) {
+        this.currentCounter = number;
+    }
+    public setEachData(data) : void{
+        this.EachData = data;
+    }
+    public resetEachData() : void{
+        this.EachData = '';
     }
 }
 

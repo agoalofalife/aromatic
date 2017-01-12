@@ -28,10 +28,15 @@ class ValueElement extends Element implements ITypeElement{
 
         if ( this.Parser.getToggleEach() === true ) {
 
-            let startLabel = this.Data.getStartData()[this.Parser.getLastLabelData()]; // maybe undefined
+            // let startLabel = this.Data.getStartData()[this.Parser.getLastLabelData()]; // maybe undefined
 
-            if (startLabel !== undefined){
-                endResult = startLabel[0][attachedProperties.shift()];
+
+            // console.log(attachedProperties.shift()  );
+
+            let valueForInsert = this.Parser.getСurrentDataEach()[attachedProperties.shift()];
+
+            if (valueForInsert !== undefined){
+                endResult = valueForInsert;
             } else {
                 endResult = '';
             }
