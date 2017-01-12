@@ -4,7 +4,9 @@ import ITypeElement from '../Interfaces/ITypeElement';
 
 class IfCloseElement extends Element implements ITypeElement{
     transform(){
-        return {};
+        this.toggle = true;
+        return '';
     }
+
 }
 export default IfCloseElement;

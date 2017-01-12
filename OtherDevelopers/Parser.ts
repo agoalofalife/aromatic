@@ -13,8 +13,9 @@ class Parser{
     private htmlParsing        : string;
     private collectionElements : Object[] = [];
     private templateBrackets   : string[] = ['{{', '}}'];
-    private currentContext     : string;
+    // private currentContext     : string;
     private DataLink           : Data;
+    private OutHtml            : string = '';
 
     constructor(html : string, dataClient : Object){
         this.html         =  normalizeHtml(html);
@@ -24,20 +25,31 @@ class Parser{
 
 
     parsingHtml(){
+
         while( this.htmlParsing.length) {
             let partString              = this.htmlParsing.substr( 0, this.htmlParsing.search(this.templateBrackets[0]) );
             this.htmlParsing            = this.htmlParsing.substr( this.htmlParsing.search(this.templateBrackets[0]) );
-            this.collectionElements.push(this.factoryString(partString));
+            let TypeTextElement         = this.factoryString(partString);
+            if (TypeTextElement !== undefined ) {
+                this.collectionElements.push(TypeTextElement);
+            }
+
 
             let partBrackets      = this.htmlParsing.substr(0, this.htmlParsing.search(this.templateBrackets[1]) + 2);
             this.htmlParsing      = this.htmlParsing.substr(this.htmlParsing.search(this.templateBrackets[1])+ 2);
-            this.collectionElements.push(this.factoryString(partBrackets));
+            let TypeElement       = this.factoryString(partBrackets.trim());
+            if (TypeElement !== undefined ) {
+                this.collectionElements.push(TypeElement);
+            }
+
 
         }
+
         // console.log(  this.collectionElements );
     }
 
     factoryString(string : string) : ITypeElement{
+
         if ( new RegExp('{{#if [A-z]{1,}', 'g').test(string)) {
             return new IfElement(string, this, this.DataLink);
         }
@@ -57,15 +69,21 @@ class Parser{
         }
     }
 
+
     builderOutHtml(){
 
+    this.collectionElements.forEach( item => {
+        // console.log( item );
+           this.OutHtml +=  item['transform']();
+    });
+    console.log( this.OutHtml );
     }
 
 
-
-    public getCurrentContext() : string{
-        return this.currentContext;
+    public setOutHtml(string : string){
+        this.OutHtml = string;
     }
+
 }
 
 export default Parser;

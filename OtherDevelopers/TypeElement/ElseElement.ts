@@ -4,7 +4,11 @@ import ITypeElement from '../Interfaces/ITypeElement';
 
 class ElseElement extends Element implements ITypeElement{
     transform(){
-        return {};
+        if ( this.toggle === false ) {
+            this.toggle = true;
+        }
+        return '';
     }
+
 }
 export default ElseElement;

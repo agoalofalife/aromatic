@@ -1,4 +1,4 @@
 interface ITypeElement{
-    transform()  : Object
+    transform()  : string
 }
 export default ITypeElement;

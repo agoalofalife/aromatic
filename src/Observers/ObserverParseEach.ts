@@ -1,6 +1,6 @@
 import TemplateObserver from '../Interfaces/TemplateObserver';
 import Template from '../Template';
-import entityMap from '../Maps/EntityMap';
+import entityMap from '../../OtherDevelopers/Maps/EntityMap';
 
 
 class ObserverParseEach implements TemplateObserver{

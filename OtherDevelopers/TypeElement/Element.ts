@@ -3,9 +3,11 @@ import Data from '../Data';
 
 
 abstract class Element {
-    private originalString : string;
-    Parser                 : Parser;
-    Data                   : Data;
+    private originalString     : string;
+    protected toggle           : boolean = true;
+    Parser                     : Parser;
+    Data                       : Data;
+
 
     constructor(string : string, Parser : Parser, Data : Data){
         this.originalString = string;

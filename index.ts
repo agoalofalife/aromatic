@@ -29,7 +29,7 @@ let context = {
 };
 let parser = new Parser(node.innerHTML, context);
 parser.parsingHtml();
-
+parser.builderOutHtml();
 
 // let template = new Template(node.innerHTML);
 //     template.loadObject(context);

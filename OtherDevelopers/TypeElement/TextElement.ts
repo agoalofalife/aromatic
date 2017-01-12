@@ -4,7 +4,7 @@ import ITypeElement from '../Interfaces/ITypeElement';
 
 class TextElement extends Element implements ITypeElement{
     transform(){
-        return {};
+        return this.getOriginalString();
     }
 }
 export default TextElement;
