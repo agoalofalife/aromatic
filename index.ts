@@ -2,6 +2,7 @@ import Template from './src/Template';
 import ObserverParseValues from './src/Observers/ObserverParseValues';
 import ObserverParseValuesWithPoint from './src/Observers/ObserverParseValuesWithPoint';
 import ObserverParseEach from './src/Observers/ObserverParseEach';
+import Parser from './OtherDevelopers/Parser';
 
 let node = document.querySelector('#test');
 
@@ -26,13 +27,15 @@ let context = {
         }
     ]
 };
+let parser = new Parser(node.innerHTML);
+parser.parsingHtml();
 
-let template = new Template(node.innerHTML);
-    template.loadObject(context);
-
-template.attach(new ObserverParseValues());
-template.attach(new ObserverParseValuesWithPoint());
-template.attach(new ObserverParseEach());
-
-
-node.innerHTML = template.compile();
+// let template = new Template(node.innerHTML);
+//     template.loadObject(context);
+//
+// template.attach(new ObserverParseValues());
+// template.attach(new ObserverParseValuesWithPoint());
+// template.attach(new ObserverParseEach());
+//
+//
+// node.innerHTML = template.compile();
