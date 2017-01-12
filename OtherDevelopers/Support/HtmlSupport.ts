@@ -1,3 +1,5 @@
+import entityMap from '../Maps/EntityMap';
+
 /**
  * Removes all \n in Html and spaces between tags
  * @param text
@@ -10,4 +12,15 @@ function normalizeText(text : string) : string {
     return text;
 }
 
-export  {normalizeText};
+/**
+ * converts values
+ * @param html
+ * @returns {string}
+ */
+function escapeHtml(html : string) : string{
+    return String(html).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+        return entityMap[s];
+    });
+}
+
+export  {normalizeText,escapeHtml};

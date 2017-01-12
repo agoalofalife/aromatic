@@ -27,8 +27,9 @@ let context = {
         }
     ]
 };
-let parser = new Parser(node.innerHTML);
+let parser = new Parser(node.innerHTML, context);
 parser.parsingHtml();
+
 
 // let template = new Template(node.innerHTML);
 //     template.loadObject(context);
