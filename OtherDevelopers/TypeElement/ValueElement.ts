@@ -5,11 +5,16 @@ import {escapeHtml} from '../Support/HtmlSupport';
 
 
 class ValueElement extends Element implements ITypeElement{
+    regexPutMustache  : string  = '[A-z]{1,}\.?[A-z]{1,}';
+    FlagWithoutEscape : boolean = false;
 
-    public transform(){
-        let valueInBrackets      =  this.getOriginalString().match('[A-z]{1,}\.?[A-z]{1,}').shift();
-        let attachedProperties   =  valueInBrackets.split('.');
-        let endResult : any;
+    public transform() : string{
+        let valueInBrackets  : string    =  this.getOriginalString().match(this.regexPutMustache).shift();
+
+        this.getOriginalString().search('{{3}(.+)}{3}') === -1 ? this.FlagWithoutEscape = false : this.FlagWithoutEscape = true;
+
+        let attachedProperties  : string[] =  valueInBrackets.split('.');
+        let endResult           : any;
 
 
         if ( this.Parser.getToggle() === true && attachedProperties !== undefined && this.Parser.getToggleEach() === false) {
@@ -23,7 +28,8 @@ class ValueElement extends Element implements ITypeElement{
             } else {
                 endResult = this.Data.getStartData()[attachedProperties.shift()];
             }
-            return escapeHtml(endResult);
+
+            return this.FlagWithoutEscape ? endResult : escapeHtml(endResult);
         }
 
         if ( this.Parser.getToggleEach() === true && this.Parser.getToggle() === true) {
@@ -39,6 +45,5 @@ class ValueElement extends Element implements ITypeElement{
         }
         return '';
     }
-
 }
 export default ValueElement;

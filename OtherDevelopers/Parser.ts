@@ -1,6 +1,7 @@
 import {normalizeText as normalizeHtml} from './Support/HtmlSupport';
 import ITypeElement  from './Interfaces/ITypeElement';
 import ValueElement from './TypeElement/ValueElement';
+import ValueEscapeElement from './TypeElement/ValueElement';
 import IfElement from './TypeElement/IfElement';
 import ElseElement from './TypeElement/ElseElement'
 import IfCloseElement from './TypeElement/IfCloseElement';
@@ -23,13 +24,15 @@ import Data from './Data';
  * @property currentCounter      the current iteration is on collectionElements
  * @property freezeCounter       freezing of iteration count, it is necessary to be able to return to the desired iterative step
  * @property currentDataEach     Boxing with the data to pass {{each}}
- *
+ * @constructor                  Loads source , line copies again for work, and loads the data to populate
+ * @method  parsingHtml          Parses a string into its constituent elements
  */
 class Parser{
     private html               : string;
     private htmlParsing        : string;
     private collectionElements : Object[] = [];
     private templateBrackets   : string[] = ['{{', '}}'];
+    private TripleStash        : string[] = ['{{{', '}}}'];
     private DataLink           : Data;
     private OutHtml            : string = '';
     protected toggle           : boolean = true;
@@ -48,7 +51,6 @@ class Parser{
 
 
     parsingHtml(){
-
         while( this.htmlParsing.length) {
             let positionStartBrackets   = this.htmlParsing.search(this.templateBrackets[0]);
 
@@ -67,14 +69,14 @@ class Parser{
             }
 
 
-            let positionEndBrackets =  this.htmlParsing.search(this.templateBrackets[1]);
+            let positionEndBrackets        =  this.htmlParsing.search(this.templateBrackets[1]);
 
-            // if ( positionEndBrackets === -1 ) {
-            // console.log( this.htmlParsing );
-            // }
+            if ( this.htmlParsing.search(this.TripleStash[1]) !== -1){
+                 positionEndBrackets    =  this.htmlParsing.search(this.TripleStash[1]) + 1 ;
+            }
 
-            let partBrackets      = this.htmlParsing.substr(0, positionEndBrackets + 2);
-            this.htmlParsing      = this.htmlParsing.substr(positionEndBrackets + 2);
+            let partBrackets        = this.htmlParsing.substr(0, positionEndBrackets + 2);
+            this.htmlParsing        = this.htmlParsing.substr(positionEndBrackets + 2);
 
             let TypeElement       = this.factoryString(partBrackets.trim());
             if (TypeElement !== undefined ) {
@@ -102,6 +104,12 @@ class Parser{
         if ( new RegExp('{{/each}}', 'g').test(string)) {
             return new EachElementClose(string, this, this.DataLink);
         }
+
+        if ( new RegExp('{{{[A-z]{1,}}}}', 'g').test(string) ) {
+            console.log( string );
+            return new ValueEscapeElement(string, this, this.DataLink);
+        }
+
         if ( new RegExp('{{[A-z]{1,}', 'g').test(string) ) {
             return new ValueElement(string, this, this.DataLink);
         }
@@ -116,6 +124,7 @@ class Parser{
         while ( this.collectionElements[this.currentCounter] !== undefined ) {
 
             this.OutHtml += this.collectionElements[this.currentCounter]['transform']();
+
             this.currentCounter++;
         }
         // console.log( this.OutHtml );
