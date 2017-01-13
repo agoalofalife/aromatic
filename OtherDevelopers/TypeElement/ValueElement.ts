@@ -26,12 +26,7 @@ class ValueElement extends Element implements ITypeElement{
             return escapeHtml(endResult);
         }
 
-        if ( this.Parser.getToggleEach() === true ) {
-
-            // let startLabel = this.Data.getStartData()[this.Parser.getLastLabelData()]; // maybe undefined
-
-
-            // console.log(attachedProperties.shift()  );
+        if ( this.Parser.getToggleEach() === true && this.Parser.getToggle() === true) {
 
             let valueForInsert = this.Parser.getСurrentDataEach()[attachedProperties.shift()];
 
@@ -40,8 +35,9 @@ class ValueElement extends Element implements ITypeElement{
             } else {
                 endResult = '';
             }
+            return endResult;
         }
-        return endResult;
+        return '';
     }
 
 }

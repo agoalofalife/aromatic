@@ -15,8 +15,14 @@ import Data from './Data';
  * @property collectionElements  a collection of objects after parsing  property htmlParsing
  * @property templateBrackets    template to insert values in HTML
  * @property DataLink            the reference to the object with current data
+ * @property OutHtml             returns the template engine
+ * @property toggle
+ * @property toggleEach          switch now parsing loop {{each}}
+ * @property lastLabelData
  * @property EachData            the actual data for a bust in loop {{each}}
  * @property currentCounter      the current iteration is on collectionElements
+ * @property freezeCounter       freezing of iteration count, it is necessary to be able to return to the desired iterative step
+ * @property currentDataEach     Boxing with the data to pass {{each}}
  *
  */
 class Parser{
@@ -42,24 +48,40 @@ class Parser{
 
 
     parsingHtml(){
+
         while( this.htmlParsing.length) {
-            let partString              = this.htmlParsing.substr( 0, this.htmlParsing.search(this.templateBrackets[0]) );
-            this.htmlParsing            = this.htmlParsing.substr( this.htmlParsing.search(this.templateBrackets[0]) );
+            let positionStartBrackets   = this.htmlParsing.search(this.templateBrackets[0]);
+
+            if (positionStartBrackets === -1) {
+                this.collectionElements.push( this.factoryString(this.htmlParsing) );
+                this.htmlParsing = '';
+            }
+
+            let partString              = this.htmlParsing.substr( 0, positionStartBrackets );
+
+            this.htmlParsing            = this.htmlParsing.substr( positionStartBrackets );
             let TypeTextElement         = this.factoryString(partString);
+
             if (TypeTextElement !== undefined ) {
                 this.collectionElements.push(TypeTextElement);
             }
 
-            let partBrackets      = this.htmlParsing.substr(0, this.htmlParsing.search(this.templateBrackets[1]) + 2);
-            this.htmlParsing      = this.htmlParsing.substr(this.htmlParsing.search(this.templateBrackets[1])+ 2);
+
+            let positionEndBrackets =  this.htmlParsing.search(this.templateBrackets[1]);
+
+            // if ( positionEndBrackets === -1 ) {
+            // console.log( this.htmlParsing );
+            // }
+
+            let partBrackets      = this.htmlParsing.substr(0, positionEndBrackets + 2);
+            this.htmlParsing      = this.htmlParsing.substr(positionEndBrackets + 2);
+
             let TypeElement       = this.factoryString(partBrackets.trim());
             if (TypeElement !== undefined ) {
                 this.collectionElements.push(TypeElement);
             }
 
-
         }
-
         // console.log(  this.collectionElements );
     }
 
@@ -68,7 +90,6 @@ class Parser{
         if ( new RegExp('{{#if [A-z]{1,}', 'g').test(string)) {
             return new IfElement(string, this, this.DataLink);
         }
-
         if ( new RegExp('{{#else}}', 'g').test(string)) {
             return new ElseElement(string, this, this.DataLink);
         }
@@ -90,48 +111,19 @@ class Parser{
     }
 
 
+    // Builder end of the row for output to the client
     builderOutHtml(){
-    // this.collectionElements.forEach( (item, key, sourceArray) => {
-    //         // if ( this.toggleEach === true ) {
-    //         //     this.LoopForEach(item,key);
-    //         // } else {
-    //         //     this.currentCounter = key;
-    //         //     this.OutHtml +=  item['transform']();
-    //         // }
-    //
-    //     this.OutHtml +=  sourceArray[key]['transform']();
-    //
-    // });
-
-
         while ( this.collectionElements[this.currentCounter] !== undefined ) {
-            this.OutHtml = this.collectionElements[this.currentCounter]['transform']();
+
+            this.OutHtml += this.collectionElements[this.currentCounter]['transform']();
             this.currentCounter++;
         }
         // console.log( this.OutHtml );
-        // let step = this.myGenerator();
-        // console.log(step.next() );
-
     }
 
-    // specially for Each
-    LoopForEach(element, key : number){
-        let start : number = key;
-
-        this.OutHtml += this.collectionElements[start]['transform']();
-
+    public getOutHtml(){
+       return this.OutHtml;
     }
-
-     *myGenerator() {
-         for(let element in this.collectionElements){
-              yield this.collectionElements[element]['transform']();
-         }
-   }
-
-    public setOutHtml(string : string) : void{
-        this.OutHtml = string;
-    }
-
     public getToggle() : boolean{
         return this.toggle;
     }
@@ -150,7 +142,6 @@ class Parser{
     public getFreezeCounter() : number {
         return this.freezeCounter;
     }
-
     public getСurrentDataEach() : any{
         return this.currentDataEach;
     }
@@ -179,6 +170,9 @@ class Parser{
     }
     public resetEachData() : void{
         this.EachData = '';
+    }
+    public setOutHtml(string : string) : void{
+        this.OutHtml = string;
     }
 }
 

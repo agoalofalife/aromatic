@@ -3,10 +3,11 @@ import ITypeElement from '../Interfaces/ITypeElement';
 
 
 class ElseElement extends Element implements ITypeElement{
+
     transform(){
 
-        if ( this.Parser.getToggle() === false ) {
-            this.Parser.setToggleEach( true );
+        if ( this.Parser.getToggle() === true ) {
+            this.Parser.setToogle( false );
         }
         return '';
     }

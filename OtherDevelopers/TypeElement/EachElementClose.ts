@@ -7,8 +7,10 @@ class EachElementClose extends Element implements ITypeElement{
 
     transform(){
 
-        if ( this.Parser.getEachData().length > 0 ) {
+        if ( this.Parser.getEachData().length  !== 0 ) {
             this.Parser.setCurrentCounter(this.Parser.getFreezeCounter());
+        } else{
+            this.Parser.setFreezeCounter(0);
         }
 
 

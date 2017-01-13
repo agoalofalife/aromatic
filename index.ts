@@ -27,10 +27,11 @@ let context = {
         }
     ]
 };
+
 let parser = new Parser(node.innerHTML, context);
 parser.parsingHtml();
 parser.builderOutHtml();
-
+node.innerHTML = parser.getOutHtml();
 
 // let template = new Template(node.innerHTML);
 //     template.loadObject(context);
