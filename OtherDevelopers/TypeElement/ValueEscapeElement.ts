@@ -13,6 +13,8 @@ class ValueEscapeElement extends Element implements ITypeElement{
 
 
         if ( this.Parser.getToggle() === true && attachedProperties !== undefined && this.Parser.getToggleEach() === false) {
+
+            // this is for objects with their properties example object.property
             if ( attachedProperties.length > 1 ) {
                 let buidDeepObject = this.Data.getStartData();
 
@@ -27,14 +29,19 @@ class ValueEscapeElement extends Element implements ITypeElement{
         }
 
         if ( this.Parser.getToggleEach() === true && this.Parser.getToggle() === true) {
-            let valueForInsert = this.Parser.getСurrentDataEach()[attachedProperties.shift()];
+            let valueForInsert : string;
+            if ( attachedProperties.length > 1 ) {
+                let buidDeepObject = this.Parser.getСurrentDataEach();
 
-            if (valueForInsert !== undefined){
-                endResult = valueForInsert;
+                attachedProperties.forEach( property => {
+                    valueForInsert = valueForInsert ? valueForInsert[property] : buidDeepObject[property];
+                });
+
             } else {
-                endResult = '';
+                valueForInsert = this.Parser.getСurrentDataEach()[attachedProperties.shift()];
             }
-            return endResult;
+
+            return valueForInsert || '';
         }
         return '';
     }

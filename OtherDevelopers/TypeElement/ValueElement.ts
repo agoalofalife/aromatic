@@ -3,7 +3,6 @@ import ITypeElement from '../Interfaces/ITypeElement';
 import {escapeHtml} from '../Support/HtmlSupport';
 
 
-
 class ValueElement extends Element implements ITypeElement{
     regexPutMustache  : string  = '[A-z]{1,}\.?[A-z]{1,}';
 
@@ -16,6 +15,7 @@ class ValueElement extends Element implements ITypeElement{
 
         if ( this.Parser.getToggle() === true && attachedProperties !== undefined && this.Parser.getToggleEach() === false) {
 
+            // this is for objects with their properties example object.property
             if ( attachedProperties.length > 1 ) {
                 let buidDeepObject = this.Data.getStartData();
 
@@ -30,15 +30,19 @@ class ValueElement extends Element implements ITypeElement{
         }
 
         if ( this.Parser.getToggleEach() === true && this.Parser.getToggle() === true) {
+            let valueForInsert : string;
+            if ( attachedProperties.length > 1 ) {
+                let buidDeepObject = this.Parser.getСurrentDataEach();
 
-            let valueForInsert = this.Parser.getСurrentDataEach()[attachedProperties.shift()];
+                attachedProperties.forEach( property => {
+                    valueForInsert = valueForInsert ? valueForInsert[property] : buidDeepObject[property];
+                });
 
-            if (valueForInsert !== undefined){
-                endResult = valueForInsert;
             } else {
-                endResult = '';
+                valueForInsert = this.Parser.getСurrentDataEach()[attachedProperties.shift()];
             }
-            return escapeHtml(endResult);
+
+            return escapeHtml(valueForInsert || '');
         }
         return '';
     }

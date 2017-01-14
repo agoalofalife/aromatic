@@ -9,9 +9,6 @@ import EachElement from './TypeElement/EachElement';
 import EachElementClose from './TypeElement/EachElementClose';
 import TextElement from './TypeElement/TextElement';
 import Data from './Data';
-import BaseTemplate from './ChainTemplates/BaseTemplate';
-import EscapeTemplate from './ChainTemplates/EscapeTemplate';
-import TypeTemplate from './Enums/TypeTemplate';
 
 /**
  * @property html                the input string HTML
@@ -35,7 +32,7 @@ class Parser{
     private htmlParsing        : string;
     private collectionElements : Object[] = [];
     private templateBrackets   : string[] = ['{{', '}}'];
-    private TripleStash        : string[] = ['{{{', '}}}'];
+    private TripleStash        : string[] = ['{{{', '}}}']; // while it does not matter
     private DataLink           : Data;
     private OutHtml            : string = '';
     protected toggle           : boolean = true;
@@ -49,24 +46,12 @@ class Parser{
     constructor(html : string, dataClient : Object){
         this.html         =  normalizeHtml(html);
         this.htmlParsing  =  normalizeHtml(html);
-        this.DataLink     = new Data(dataClient);
+        this.DataLink     =  new Data(dataClient);
     }
 
 
     parsingHtml(){
         while( this.htmlParsing.length) {
-
-            // let templateOne     = new EscapeTemplate(new BaseTemplate());
-            // let response        = templateOne.handle( this.htmlParsing, TypeTemplate.ONETYPE);
-            // this.htmlParsing    = templateOne.getRestString();
-            //
-            // console.log(   this.htmlParsing  );
-            // // let templateTwo        = new BaseTemplate(new EscapeTemplate());
-            // let responseTwo        = templateOne.handle( this.htmlParsing, TypeTemplate.TWOTYPE);
-            // this.htmlParsing       = templateOne.getRestString();
-            // console.log(   this.htmlParsing  );
-            // this.htmlParsing = '';
-
 
             let positionStartBrackets   = this.htmlParsing.search(this.templateBrackets[0]);
 
@@ -92,7 +77,6 @@ class Parser{
             if (TypeElement !== undefined ) {
                 this.collectionElements.push(TypeElement);
             }
-
         }
 
         // console.log(  this.collectionElements );
@@ -100,24 +84,23 @@ class Parser{
 
     factoryString(string : string) : ITypeElement{
         // console.log( string );
-        if ( new RegExp('{{#if [A-z]{1,}', 'g').test(string)) {
+        if ( new RegExp('{{\\s*#if [A-z]{1,}\\s*}}', 'g').test(string)) {
             return new IfElement(string, this, this.DataLink);
         }
-        if ( new RegExp('{{#else}}', 'g').test(string)) {
+        if ( new RegExp('{{\\s*#else\\s*}}', 'g').test(string)) {
             return new ElseElement(string, this, this.DataLink);
         }
-        if ( new RegExp('{{/if}}', 'g').test(string)) {
+        if ( new RegExp('{{\\s*\/if\\s*}}', 'g').test(string)) {
             return new IfCloseElement(string, this, this.DataLink);
         }
-        if ( new RegExp('{{#each [A-z]{1,}', 'g').test(string)) {
+        if ( new RegExp('{{\\s*#each [A-z]{1,}\\s*}}', 'g').test(string)) {
             return new EachElement(string, this, this.DataLink);
         }
-        if ( new RegExp('{{/each}}', 'g').test(string)) {
+        if ( new RegExp('{{\s*\/each\s*}}', 'g').test(string)) {
             return new EachElementClose(string, this, this.DataLink);
         }
 
         if ( new RegExp('{{\\s*\!\![A-z]{1,}(\.[A-z]{1,})*\!\!\\s*}}', 'g').test(string) ) {
-
             return new ValueEscapeElement(string, this, this.DataLink);
         }
 

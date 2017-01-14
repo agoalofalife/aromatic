@@ -18,7 +18,10 @@ let context = {
             name: 'Jane Doe',
             update: 'Just Made my Breakfaast',
             from: 'Web',
-            location: 'Canada'
+            location: 'Canada',
+            test : {
+                test : '<h1>Yess!!</h1>'
+            }
         },
         {
             name: 'John Doe',
