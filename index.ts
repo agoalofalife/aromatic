@@ -7,12 +7,12 @@ import Parser from './OtherDevelopers/Parser';
 let node = document.querySelector('#test');
 
 let context = {
-    title: "<h1>My First Blog Post!</h1>",
+    title: "<p>My First Blog Post!</p>",
     author: {
         id: 47,
         name: "Yehuda Katz"
     },
-    body: "My first post. Wheeeee!",
+    body: "<h1>My first post. Wheeeee!</h1>",
     updates: [
         {
             name: 'Jane Doe',

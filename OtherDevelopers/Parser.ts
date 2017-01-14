@@ -1,7 +1,7 @@
 import {normalizeText as normalizeHtml} from './Support/HtmlSupport';
 import ITypeElement  from './Interfaces/ITypeElement';
 import ValueElement from './TypeElement/ValueElement';
-import ValueEscapeElement from './TypeElement/ValueElement';
+import ValueEscapeElement from './TypeElement/ValueEscapeElement';
 import IfElement from './TypeElement/IfElement';
 import ElseElement from './TypeElement/ElseElement'
 import IfCloseElement from './TypeElement/IfCloseElement';
@@ -9,6 +9,9 @@ import EachElement from './TypeElement/EachElement';
 import EachElementClose from './TypeElement/EachElementClose';
 import TextElement from './TypeElement/TextElement';
 import Data from './Data';
+import BaseTemplate from './ChainTemplates/BaseTemplate';
+import EscapeTemplate from './ChainTemplates/EscapeTemplate';
+import TypeTemplate from './Enums/TypeTemplate';
 
 /**
  * @property html                the input string HTML
@@ -52,6 +55,19 @@ class Parser{
 
     parsingHtml(){
         while( this.htmlParsing.length) {
+
+            // let templateOne     = new EscapeTemplate(new BaseTemplate());
+            // let response        = templateOne.handle( this.htmlParsing, TypeTemplate.ONETYPE);
+            // this.htmlParsing    = templateOne.getRestString();
+            //
+            // console.log(   this.htmlParsing  );
+            // // let templateTwo        = new BaseTemplate(new EscapeTemplate());
+            // let responseTwo        = templateOne.handle( this.htmlParsing, TypeTemplate.TWOTYPE);
+            // this.htmlParsing       = templateOne.getRestString();
+            // console.log(   this.htmlParsing  );
+            // this.htmlParsing = '';
+
+
             let positionStartBrackets   = this.htmlParsing.search(this.templateBrackets[0]);
 
             if (positionStartBrackets === -1) {
@@ -60,7 +76,6 @@ class Parser{
             }
 
             let partString              = this.htmlParsing.substr( 0, positionStartBrackets );
-
             this.htmlParsing            = this.htmlParsing.substr( positionStartBrackets );
             let TypeTextElement         = this.factoryString(partString);
 
@@ -70,25 +85,21 @@ class Parser{
 
 
             let positionEndBrackets        =  this.htmlParsing.search(this.templateBrackets[1]);
+            let partBrackets               = this.htmlParsing.substr(0, positionEndBrackets + 2);
+            this.htmlParsing               = this.htmlParsing.substr(positionEndBrackets + 2);
+            let TypeElement                = this.factoryString(partBrackets.trim());
 
-            if ( this.htmlParsing.search(this.TripleStash[1]) !== -1){
-                 positionEndBrackets    =  this.htmlParsing.search(this.TripleStash[1]) + 1 ;
-            }
-
-            let partBrackets        = this.htmlParsing.substr(0, positionEndBrackets + 2);
-            this.htmlParsing        = this.htmlParsing.substr(positionEndBrackets + 2);
-
-            let TypeElement       = this.factoryString(partBrackets.trim());
             if (TypeElement !== undefined ) {
                 this.collectionElements.push(TypeElement);
             }
 
         }
+
         // console.log(  this.collectionElements );
     }
 
     factoryString(string : string) : ITypeElement{
-
+        // console.log( string );
         if ( new RegExp('{{#if [A-z]{1,}', 'g').test(string)) {
             return new IfElement(string, this, this.DataLink);
         }
@@ -105,12 +116,12 @@ class Parser{
             return new EachElementClose(string, this, this.DataLink);
         }
 
-        if ( new RegExp('{{{[A-z]{1,}}}}', 'g').test(string) ) {
-            console.log( string );
+        if ( new RegExp('{{\\s*\!\![A-z]{1,}(\.[A-z]{1,})*\!\!\\s*}}', 'g').test(string) ) {
+
             return new ValueEscapeElement(string, this, this.DataLink);
         }
 
-        if ( new RegExp('{{[A-z]{1,}', 'g').test(string) ) {
+        if ( new RegExp('{{\\s*[A-z]{1,}(\.[A-z]{1,})*\\s*}}', 'g').test(string) ) {
             return new ValueElement(string, this, this.DataLink);
         }
         if ( new RegExp('.+', 'g').test(string) ) {
@@ -124,7 +135,6 @@ class Parser{
         while ( this.collectionElements[this.currentCounter] !== undefined ) {
 
             this.OutHtml += this.collectionElements[this.currentCounter]['transform']();
-
             this.currentCounter++;
         }
         // console.log( this.OutHtml );

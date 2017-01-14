@@ -7,11 +7,11 @@
 <body>
 <div id="test">
     <div class="entry">
-        <div>{{{title}}}</div>
+        <div>{{!!title!!}}</div>
         <h2>By {{author.name}}</h2>
 
         <div class="body">
-            {{body}}
+            {{ !!body!! }}
         </div>
 
         {{#each updates}}
@@ -30,7 +30,7 @@
         </li>
         {{/each}}
         <div class="body">
-            {{body}}
+            {{ !!body!! }}
         </div>
         {{#each finish}}
         <li>
