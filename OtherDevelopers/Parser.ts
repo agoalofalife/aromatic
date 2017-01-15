@@ -1,14 +1,16 @@
 import {normalizeText as normalizeHtml} from './Support/HtmlSupport';
-import ITypeElement  from './Interfaces/ITypeElement';
-import ValueElement from './TypeElement/ValueElement';
+import ITypeElement       from './Interfaces/ITypeElement';
+import ValueElement       from './TypeElement/ValueElement';
 import ValueEscapeElement from './TypeElement/ValueEscapeElement';
-import IfElement from './TypeElement/IfElement';
-import ElseElement from './TypeElement/ElseElement'
-import IfCloseElement from './TypeElement/IfCloseElement';
-import EachElement from './TypeElement/EachElement';
-import EachElementClose from './TypeElement/EachElementClose';
-import TextElement from './TypeElement/TextElement';
-import Data from './Data';
+import IfElement          from './TypeElement/IfElement';
+import ElseElement        from './TypeElement/ElseElement'
+import IfCloseElement     from './TypeElement/IfCloseElement';
+import FilterElement      from './TypeElement/FilterElement';
+import EachElement        from './TypeElement/EachElement';
+import EachElementClose   from './TypeElement/EachElementClose';
+import TextElement        from './TypeElement/TextElement';
+import Data               from './Data';
+
 
 /**
  * @property html                the input string HTML
@@ -25,27 +27,31 @@ import Data from './Data';
  * @property freezeCounter       freezing of iteration count, it is necessary to be able to return to the desired iterative step
  * @property currentDataEach     Boxing with the data to pass {{each}}
  * @constructor                  Loads source , line copies again for work, and loads the data to populate
- * @method  parsingHtml          Parses a string into its constituent elements
+ * @method   parsingHtml         Parses a string into its constituent elements
+ * @method   factoryString       the method validates the values with a regular expression and return object
+ * @method   builderOutHtml      causes all objects elements of one single method  "transform"
  */
 class Parser{
-    private html               : string;
-    private htmlParsing        : string;
-    private collectionElements : Object[] = [];
-    private templateBrackets   : string[] = ['{{', '}}'];
-    private TripleStash        : string[] = ['{{{', '}}}']; // while it does not matter
-    private DataLink           : Data;
-    private OutHtml            : string = '';
-    protected toggle           : boolean = true;
-    protected toggleEach       : boolean = false;
-    protected lastLabelData    : string;
-    protected EachData         : any;
-    protected currentCounter   : number = 0;
-    protected freezeCounter    : number = 0;
-    protected currentDataEach  : any;
+    private   html               : string;
+    private   htmlParsing        : string;
+    private   collectionElements : Object[] = [];
+    private   templateBrackets   : string[] = ['{{', '}}'];
+    private   TripleStash        : string[] = ['{{{', '}}}']; // while it does not matter
+    private   DataLink           : Data;
+    private   OutHtml            : string = '';
+    protected toggle             : boolean = true;
+    protected toggleEach         : boolean = false;
+    protected lastLabelData      : string;
+    protected EachData           : any;
+    protected currentCounter     : number = 0;
+    protected freezeCounter      : number = 0;
+    protected currentDataEach    : any;
+
 
     constructor(html : string, dataClient : Object){
         this.html         =  normalizeHtml(html);
         this.htmlParsing  =  normalizeHtml(html);
+
         this.DataLink     =  new Data(dataClient);
     }
 
@@ -83,7 +89,6 @@ class Parser{
     }
 
     factoryString(string : string) : ITypeElement{
-        // console.log( string );
         if ( new RegExp('{{\\s*#if [A-z]{1,}\\s*}}', 'g').test(string)) {
             return new IfElement(string, this, this.DataLink);
         }
@@ -99,11 +104,12 @@ class Parser{
         if ( new RegExp('{{\s*\/each\s*}}', 'g').test(string)) {
             return new EachElementClose(string, this, this.DataLink);
         }
-
+        if ( new RegExp('{{\\s*[A-z]{1,}\\s*\\|\\s*[A-z]{1,}\\s*}}', 'g').test(string)) {
+            return new FilterElement(string, this, this.DataLink);
+        }
         if ( new RegExp('{{\\s*\!\![A-z]{1,}(\.[A-z]{1,})*\!\!\\s*}}', 'g').test(string) ) {
             return new ValueEscapeElement(string, this, this.DataLink);
         }
-
         if ( new RegExp('{{\\s*[A-z]{1,}(\.[A-z]{1,})*\\s*}}', 'g').test(string) ) {
             return new ValueElement(string, this, this.DataLink);
         }
@@ -147,6 +153,7 @@ class Parser{
     public getСurrentDataEach() : any{
         return this.currentDataEach;
     }
+
 
 
     public setToogle(bool : boolean): void {
