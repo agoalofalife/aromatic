@@ -1,24 +1,26 @@
-import Element                   from  './Element';
-import ITypeElement              from '../Interfaces/ITypeElement';
-import Aromatic                  from '../Aromatic';
-import {extractFunctionParameters} from '../Support/FunctionSupport';
+import Element                     from  './Element';
+import ITypeElement                from '../Interfaces/ITypeElement';
+import Aromatic                    from '../Aromatic';
+import {isNotUndefined}            from '../Support/IsType';
 
 
+/**
+ * @description                     Class for custom functions transforming values
+ * @property    regexPutMustache    Regular expression to extract
+ * @method      transform           the basic method for all types  Element
+ *
+ */
 class FilterElement extends Element implements ITypeElement{
-    regexPutMustache  : string  = '{{([A-z]+)\\s*\\|\\s*([A-z]+)}}';
+    private regexPutMustache  : string  = '{{([A-z]+\\.?[A-z]+)\\s*\\|\\s*([A-z]+)}}';
 
     public transform() : string{
 
-            let filterFunction                    =    this.getOriginalString().match(this.regexPutMustache)[2];
-            let valueInBrackets     : string      =    this.getOriginalString().match(this.regexPutMustache)[1];
+            let NameFilterFunction                    =    this.getOriginalString().match(this.regexPutMustache)[2];
+            let valueInBrackets     : string          =    this.getOriginalString().match(this.regexPutMustache)[1];
 
-            let temp = Aromatic.getFilter(filterFunction);
-
-
-            console.log(extractFunctionParameters(temp) );
-        // console.log( Function.prototype.call() );
-
-            let attachedProperties  : string[]    =    valueInBrackets.split('.');
+            // get custom function
+            let filterFunction                        =    Aromatic.getFilter( NameFilterFunction );
+            let attachedProperties  : string[]        =    valueInBrackets.split('.');
             let endResult           : any;
 
             if ( this.Parser.getToggle() === true && attachedProperties !== undefined && this.Parser.getToggleEach() === false) {
@@ -30,24 +32,40 @@ class FilterElement extends Element implements ITypeElement{
                     attachedProperties.forEach( property => {
                         endResult = endResult ? endResult[property] : buidDeepObject[property];
                     });
+                    if ( isNotUndefined( endResult ) ) {
+                        endResult =  filterFunction( endResult );
+                    }
                 } else {
-                    endResult = this.Data.getStartData()[attachedProperties.shift()];
+                    let parameterFunction =  this.Data.getStartData()[valueInBrackets];
+
+                    if ( isNotUndefined( parameterFunction ) ) {
+                        endResult =  filterFunction( parameterFunction );
+                    }
                 }
 
-                return endResult ;
+                return endResult;
             }
 
             if ( this.Parser.getToggleEach() === true && this.Parser.getToggle() === true) {
+
                 let valueForInsert : string;
                 if ( attachedProperties.length > 1 ) {
-                    let buidDeepObject = this.Parser.getСurrentDataEach();
+
+                    let buidDeepObject =  this.Parser.getСurrentDataEach();
 
                     attachedProperties.forEach( property => {
-                        valueForInsert = valueForInsert ? valueForInsert[property] : buidDeepObject[property];
+                        endResult = endResult ? endResult[property] : buidDeepObject[property];
                     });
 
+                    if ( isNotUndefined( endResult ) ) {
+                        endResult =  filterFunction( endResult );
+                    }
+                    return endResult || '';
                 } else {
-                    valueForInsert = this.Parser.getСurrentDataEach()[attachedProperties.shift()];
+                    let parameterFunction = this.Parser.getСurrentDataEach()[valueInBrackets];
+                    if ( isNotUndefined( parameterFunction ) ) {
+                        valueForInsert =  filterFunction( this.Parser.getСurrentDataEach()[valueInBrackets] );
+                    }
                 }
 
                 return valueForInsert || '';

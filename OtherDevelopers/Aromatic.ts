@@ -12,7 +12,7 @@ class Aromatic {
     }
 
 
-    static getFilter(filterName : string) : Function{
+    static getFilter(filterName : string) : any{
         return this.FilterBox[filterName];
     }
 

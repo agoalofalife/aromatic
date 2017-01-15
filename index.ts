@@ -1,6 +1,12 @@
-import Parser from './OtherDevelopers/Parser';
 import Aromatic from './OtherDevelopers/Aromatic';
+import {idObject} from  './OtherDevelopers/Support/ObjectSupport';
 
+let t = {
+    test : 'test'
+};
+
+console.log( t.toString.call(idObject) );
+// console.log( idObject() );
 let node = document.querySelector('#test');
 
 let context = {
@@ -17,7 +23,10 @@ let context = {
             from: 'Web',
             location: 'Canada',
             test : {
-                test : '<h1>Yess!!</h1>'
+                test : '<h1>Yess!!</h1>',
+                tree : {
+                    test : 'Fuck?!!!'
+                }
             }
         },
         {
@@ -27,18 +36,10 @@ let context = {
         }
     ]
 };
-// OLD CODE
-// let parser = new Parser(node.innerHTML, context);
-// parser.parsingHtml();
-// parser.builderOutHtml();
-// node.innerHTML = parser.getOutHtml();
 
 Aromatic.registerFilter('tolowercase', function(test) {
-    // return person.firstName + " " + person.lastName;
-    console.log( '??' );
+    return test.test + " " + test.test;
 });
-
-console.log(Aromatic.FilterBox,'FilterBox');
 
 Aromatic.compile(node.innerHTML, context);
 node.innerHTML  = Aromatic.getHtml();

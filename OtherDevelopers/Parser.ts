@@ -104,7 +104,7 @@ class Parser{
         if ( new RegExp('{{\s*\/each\s*}}', 'g').test(string)) {
             return new EachElementClose(string, this, this.DataLink);
         }
-        if ( new RegExp('{{\\s*[A-z]{1,}\\s*\\|\\s*[A-z]{1,}\\s*}}', 'g').test(string)) {
+        if ( new RegExp('{{\\s*[A-z]+\\.*[A-z]*\\s*\\|\\s*[A-z]{1,}\\s*}}', 'g').test(string)) {
             return new FilterElement(string, this, this.DataLink);
         }
         if ( new RegExp('{{\\s*\!\![A-z]{1,}(\.[A-z]{1,})*\!\!\\s*}}', 'g').test(string) ) {
@@ -122,11 +122,9 @@ class Parser{
     // Builder end of the row for output to the client
     builderOutHtml(){
         while ( this.collectionElements[this.currentCounter] !== undefined ) {
-
             this.OutHtml += this.collectionElements[this.currentCounter]['transform']();
             this.currentCounter++;
         }
-        // console.log( this.OutHtml );
     }
 
     public getOutHtml(){
