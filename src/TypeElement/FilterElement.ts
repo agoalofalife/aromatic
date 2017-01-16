@@ -8,7 +8,6 @@ import {isNotUndefined}            from '../Support/IsType';
  * @description                     Class for custom functions transforming values
  * @property    regexPutMustache    Regular expression to extract
  * @method      transform           the basic method for all types  Element
- *
  */
 class FilterElement extends Element implements ITypeElement{
     private regexPutMustache  : string  = '{{([A-z]+\\.?[A-z]+)\\s*\\|\\s*([A-z]+)}}';
@@ -23,7 +22,7 @@ class FilterElement extends Element implements ITypeElement{
             let attachedProperties  : string[]        =    valueInBrackets.split('.');
             let endResult           : any;
 
-            if ( this.Parser.getToggle() === true && attachedProperties !== undefined && this.Parser.getToggleEach() === false) {
+            if ( this.Parser.getToggle() === true && isNotUndefined(attachedProperties) && this.Parser.getToggleEach() === false && isNotUndefined(filterFunction) ) {
 
                 // this is for objects with their properties example object.property
                 if ( attachedProperties.length > 1 ) {
@@ -46,7 +45,7 @@ class FilterElement extends Element implements ITypeElement{
                 return endResult;
             }
 
-            if ( this.Parser.getToggleEach() === true && this.Parser.getToggle() === true) {
+            if ( this.Parser.getToggleEach() === true && this.Parser.getToggle() === true && isNotUndefined(filterFunction)) {
 
                 let valueForInsert : string;
                 if ( attachedProperties.length > 1 ) {
@@ -67,12 +66,9 @@ class FilterElement extends Element implements ITypeElement{
                         valueForInsert =  filterFunction( this.Parser.getСurrentDataEach()[valueInBrackets] );
                     }
                 }
-
                 return valueForInsert || '';
             }
             return '';
         }
-
-
 }
 export default FilterElement;

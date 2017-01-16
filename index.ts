@@ -1,12 +1,5 @@
-import Aromatic from './OtherDevelopers/Aromatic';
-import {idObject} from  './OtherDevelopers/Support/ObjectSupport';
+import Aromatic from './src/Aromatic';
 
-let t = {
-    test : 'test'
-};
-
-console.log( t.toString.call(idObject) );
-// console.log( idObject() );
 let node = document.querySelector('#test');
 
 let context = {
@@ -25,7 +18,7 @@ let context = {
             test : {
                 test : '<h1>Yess!!</h1>',
                 tree : {
-                    test : 'Fuck?!!!'
+                    test : 'FUCK?!!!'
                 }
             }
         },
@@ -37,11 +30,14 @@ let context = {
     ]
 };
 
-Aromatic.registerFilter('tolowercase', function(test) {
-    return test.test + " " + test.test;
+Aromatic.registerFilter('toLowerCase', function(test) {
+    return test.test.toLowerCase();
 });
 
 Aromatic.compile(node.innerHTML, context);
+
+
+
 node.innerHTML  = Aromatic.getHtml();
 
 

@@ -3,6 +3,7 @@ import Parser from './Parser';
 class Aromatic {
     static linkParser : Parser;
     static FilterBox  : Object[] = [];
+    static PartialBox : String[] = [];
 
     static registerFilter(nameFilter : string, fn : Function) : any{
         if ( this.FilterBox[nameFilter] !== undefined ) {
@@ -11,6 +12,16 @@ class Aromatic {
         this.FilterBox[nameFilter] = fn;
     }
 
+    static registerPartial(name : string, html : string){
+        if ( this.PartialBox[name] !== undefined ) {
+            console.error(`The filter "${name}" already exists`)
+        }
+        this.PartialBox[name] = html;
+    }
+
+    static getPartial(name : string) : string{
+        return this.PartialBox[name];
+    }
 
     static getFilter(filterName : string) : any{
         return this.FilterBox[filterName];

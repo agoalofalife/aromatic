@@ -1,4 +1,3 @@
-import {normalizeText as normalizeHtml} from './Support/HtmlSupport';
 import ITypeElement       from './Interfaces/ITypeElement';
 import ValueElement       from './TypeElement/ValueElement';
 import ValueEscapeElement from './TypeElement/ValueEscapeElement';
@@ -6,11 +5,14 @@ import IfElement          from './TypeElement/IfElement';
 import ElseElement        from './TypeElement/ElseElement'
 import IfCloseElement     from './TypeElement/IfCloseElement';
 import FilterElement      from './TypeElement/FilterElement';
+import PartialElement     from './TypeElement/PartialElement';
 import EachElement        from './TypeElement/EachElement';
 import EachElementClose   from './TypeElement/EachElementClose';
 import TextElement        from './TypeElement/TextElement';
 import Data               from './Data';
-
+import Element            from './TypeElement/Element';
+import Cache              from  './Maps/CacheElementMap';
+import {normalizeText as normalizeHtml} from './Support/HtmlSupport';
 
 /**
  * @property html                the input string HTML
@@ -36,7 +38,7 @@ class Parser{
     private   htmlParsing        : string;
     private   collectionElements : Object[] = [];
     private   templateBrackets   : string[] = ['{{', '}}'];
-    private   TripleStash        : string[] = ['{{{', '}}}']; // while it does not matter
+    private   TripleStash        : string[] = ['{{{', '}}}']; // DEPRECATED ! while it does not matter
     private   DataLink           : Data;
     private   OutHtml            : string = '';
     protected toggle             : boolean = true;
@@ -46,12 +48,11 @@ class Parser{
     protected currentCounter     : number = 0;
     protected freezeCounter      : number = 0;
     protected currentDataEach    : any;
-
+    protected cacheElement       : any[] = [];
 
     constructor(html : string, dataClient : Object){
         this.html         =  normalizeHtml(html);
         this.htmlParsing  =  normalizeHtml(html);
-
         this.DataLink     =  new Data(dataClient);
     }
 
@@ -59,32 +60,44 @@ class Parser{
     parsingHtml(){
         while( this.htmlParsing.length) {
 
-            let positionStartBrackets   = this.htmlParsing.search(this.templateBrackets[0]);
+            let positionStartBrackets  : number = this.htmlParsing.search(this.templateBrackets[0]);
 
             if (positionStartBrackets === -1) {
                 this.collectionElements.push( this.factoryString(this.htmlParsing) );
                 this.htmlParsing = '';
             }
 
-            let partString              = this.htmlParsing.substr( 0, positionStartBrackets );
-            this.htmlParsing            = this.htmlParsing.substr( positionStartBrackets );
-            let TypeTextElement         = this.factoryString(partString);
+            let partString              : string        = this.htmlParsing.substr( 0, positionStartBrackets );
+            this.htmlParsing                            = this.htmlParsing.substr( positionStartBrackets );
 
-            if (TypeTextElement !== undefined ) {
-                this.collectionElements.push(TypeTextElement);
-            }
+                if( this.cacheElement[partString] === undefined) {
+                    let TypeTextElement         : ITypeElement  = this.factoryString(partString);
+
+                    if (TypeTextElement !== undefined ) {
+                        this.collectionElements.push(TypeTextElement);
+                        this.cacheElement[partString] = TypeTextElement;
+                    }
+                } else {
+                    this.collectionElements.push( this.cacheElement[partString]);
+                }
 
 
-            let positionEndBrackets        =  this.htmlParsing.search(this.templateBrackets[1]);
-            let partBrackets               = this.htmlParsing.substr(0, positionEndBrackets + 2);
-            this.htmlParsing               = this.htmlParsing.substr(positionEndBrackets + 2);
-            let TypeElement                = this.factoryString(partBrackets.trim());
 
-            if (TypeElement !== undefined ) {
-                this.collectionElements.push(TypeElement);
+            let positionEndBrackets       : number       = this.htmlParsing.search(this.templateBrackets[1]);
+            let partBrackets              : string       = this.htmlParsing.substr(0, positionEndBrackets + 2);
+            this.htmlParsing                             = this.htmlParsing.substr(positionEndBrackets + 2);
+
+            if( this.cacheElement[partBrackets] === undefined) {
+                let TypeElement: ITypeElement = this.factoryString(partBrackets.trim());
+
+                if (TypeElement !== undefined) {
+                    this.collectionElements.push(TypeElement);
+                    this.cacheElement[partBrackets] = TypeElement;
+                }
+            } else {
+                this.collectionElements.push( this.cacheElement[partBrackets]);
             }
         }
-
         // console.log(  this.collectionElements );
     }
 
@@ -113,6 +126,10 @@ class Parser{
         if ( new RegExp('{{\\s*[A-z]{1,}(\.[A-z]{1,})*\\s*}}', 'g').test(string) ) {
             return new ValueElement(string, this, this.DataLink);
         }
+        if ( new RegExp('{{&gt;\\s*[A-z]+\\s*.+}}', 'g').test(string) ) {
+            return new PartialElement(string, this, this.DataLink);
+        }
+
         if ( new RegExp('.+', 'g').test(string) ) {
             return new TextElement(string, this, this.DataLink);
         }
