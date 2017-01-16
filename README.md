@@ -10,7 +10,11 @@ To use it is quite simple and trivial.
 **To communicate you need to remember just two calls**
 
 
-
+*
+*How to install?**
+```
+npm install aromatic
+```
 ```
 // index.js import Aromatic from './src/Aromatic';
 
