@@ -7,9 +7,24 @@
 <body>
 <div id="test">
     <div class="entry">
-        <div>{{!!title!!}}</div>
+        <ul>
+            {{#each loop}}
+            <li>
+                <p>Имя : {{ firstname }}</p><p>Из {{ lastname }} </p>
+                {{#if age}}
+                <h1>{{ age }}</h1>
+                {{#else}}
+                <p>it is unknown how many years</p>
+                {{/if}}
+                {{#if child}}
+                <h1>{{ child.name }}</h1>
+                {{/if}}
+            </li>
+            {{/each}}
+        </ul>
     </div>
 </div>
+
 <script src="index.js"></script>
 </body>
 </html>

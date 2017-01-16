@@ -3,31 +3,17 @@ import Aromatic from './src/Aromatic';
 let node = document.querySelector('#test');
 
 let context = {
-    title: "<p>My First Blog Post!</p>",
-    author: {
-        id: 47,
-        name: "Yehuda Katz"
-    },
-    body: "<h1>My first post. Wheeeee!</h1>",
-    updates: [
-        {
-            name: 'Jane Doe',
-            update: 'Just Made my Breakfaast',
-            from: 'Web',
-            location: 'Canada',
-            test : {
-                test : '<h1>Yess!!</h1>',
-                tree : {
-                    test : 'FUCK?!!!'
-                }
-            }
-        },
-        {
-            name: 'John Doe',
-            update: 'What is going on with the weather?',
-            from: 'Phone',
+     loop :[ { firstname : 'Ilya', lastname : 'Chubarov' },
+        { firstname : 'Maria', lastname : 'Ivanova' },
+        { firstname : 'Misha', lastname : 'Bootosov', age : 20 },
+    {
+        firstname : 'Misha',
+        lastname : 'Bootosov',
+        age : 20 ,
+        child : {
+            name : 'To'
         }
-    ]
+    } ]
 };
 
 Aromatic.registerFilter('toLowerCase', function(test) {

@@ -5,10 +5,7 @@ import ITypeElement from '../Interfaces/ITypeElement';
 class ElseElement extends Element implements ITypeElement{
 
     transform(){
-
-        if ( this.Parser.getToggle() === true ) {
-            this.Parser.setToogle( false );
-        }
+        this.Parser.setToogle(  !this.Parser.getToggle() );
         return '';
     }
 

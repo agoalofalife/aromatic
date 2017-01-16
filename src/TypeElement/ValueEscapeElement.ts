@@ -3,14 +3,13 @@ import ITypeElement from '../Interfaces/ITypeElement';
 
 
 class ValueEscapeElement extends Element implements ITypeElement{
-    regexPutMustache  : string  = '[A-z]{1,}\.?[A-z]{1,}';
+    regexPutMustache  : string  = '[A-z.]+';
     transform() : string{
 
         let valueInBrackets     : string      =  this.getOriginalString().match(this.regexPutMustache).shift();
 
         let attachedProperties  : string[]    =  valueInBrackets.split('.');
         let endResult           : any;
-
 
         if ( this.Parser.getToggle() === true && attachedProperties !== undefined && this.Parser.getToggleEach() === false) {
 
