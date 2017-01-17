@@ -1,27 +1,25 @@
 /// <reference path="../typings/index.d.ts" />
 
-import assert = require('assert');
 import chai   = require('chai');
-
 import Data from '../src/Data';
 
+let subject : Data;
+let dataobject  = {
+    name      : 'name',
+    firstName : 'firstName'
+};
+subject  = new Data(dataobject);
 describe('Data', () =>  {
-
+    before(function() {
+    });
     describe('#instance', () =>  {
-        let subject : Data;
         it('the creation of the object Data', () =>  {
-            let dataobject  = {
-              name      : 'name',
-              firstName : 'firstName'
-            };
-
-            subject = new Data(dataobject);
             chai.assert(subject instanceof  Data);
         });
     });
     describe('#getStartData', () => {
         it('test function getter getStartData', () => {
-            chai.assert(true)
+            chai.assert.deepEqual(subject.getStartData(), dataobject);
         })
     });
 

@@ -5,7 +5,7 @@
   "main": "src/Aromatic.ts",
   "scripts": {
     "test": "mocha",
-    "test_build": "tsc test/*Test.ts",
+    "pretest": "tsc test/*Test.ts",
     "prepublish": "typings install"
   },
   "dependencies": {

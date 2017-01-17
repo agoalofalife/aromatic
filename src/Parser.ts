@@ -11,7 +11,6 @@ import EachElementClose   from './TypeElement/EachElementClose';
 import TextElement        from './TypeElement/TextElement';
 import Data               from './Data';
 import Element            from './TypeElement/Element';
-import Cache              from  './Maps/CacheElementMap';
 import {normalizeText as normalizeHtml} from './Support/HtmlSupport';
 
 /**

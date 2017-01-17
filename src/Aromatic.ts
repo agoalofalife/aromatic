@@ -7,14 +7,14 @@ class Aromatic {
 
     static registerFilter(nameFilter : string, fn : Function) : any{
         if ( this.FilterBox[nameFilter] !== undefined ) {
-            console.error(`The filter "${nameFilter}" already exists`)
+            throw new ReferenceError(`The filter "${nameFilter}" already exists`);
         }
         this.FilterBox[nameFilter] = fn;
     }
 
     static registerPartial(name : string, html : string){
         if ( this.PartialBox[name] !== undefined ) {
-            console.error(`The filter "${name}" already exists`)
+            return console.error(`The filter "${name}" already exists`)
         }
         this.PartialBox[name] = html;
     }
