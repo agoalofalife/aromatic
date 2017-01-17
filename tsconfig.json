@@ -19,5 +19,8 @@
 //    "noImplicitAny": true,
     "sourceMap": true,
     "outDir": "ts-build", "jsx": "preserve" },
-  "exclude": [ "node_modules" ]
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

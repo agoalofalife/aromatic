@@ -2,9 +2,8 @@
   "name": "aromatic",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "src/Aromatic.js",
   "scripts": {
-    "test": "mocha",
     "tsc_amd": "tsc --module es6 index.ts"
   },
   "dependencies": {
@@ -16,8 +15,6 @@
     "babel-core": "^6.21.0",
     "babel-loader": "^6.2.10",
     "babel-preset-es2015": "^6.18.0",
-    "mocha": "^3.2.0",
-    "mocha-typescript": "^1.0.15",
     "ts-loader": "^1.3.3",
     "webpack": "^1.14.0"
   }

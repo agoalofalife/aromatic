@@ -1,5 +1,5 @@
 module.exports = {
-    entry: "./index.ts",
+    entry: ["./index.ts"],
     output: {
         filename: "./index.js",
     },
