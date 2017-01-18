@@ -31,6 +31,8 @@ import {normalizeText as normalizeHtml} from './Support/HtmlSupport';
  * @method   parsingHtml         Parses a string into its constituent elements
  * @method   factoryString       the method validates the values with a regular expression and return object
  * @method   builderOutHtml      causes all objects elements of one single method  "transform"
+ * @link     https://github.com/agoalofalife/aromatic
+ * @author   agoalofalife@gmail.com
  */
 class Parser{
     private   html               : string;
@@ -97,7 +99,6 @@ class Parser{
                 this.collectionElements.push( this.cacheElement[partBrackets]);
             }
         }
-        // console.log(  this.collectionElements );
     }
 
     factoryString(string : string) : ITypeElement{
@@ -113,7 +114,7 @@ class Parser{
         if ( new RegExp('{{\\s*#each [A-z]{1,}\\s*}}', 'g').test(string)) {
             return new EachElement(string, this, this.DataLink);
         }
-        if ( new RegExp('{{\s*\/each\s*}}', 'g').test(string)) {
+        if ( new RegExp('{{\\s*\/each\\s*}}', 'g').test(string)) {
             return new EachElementClose(string, this, this.DataLink);
         }
         if ( new RegExp('{{\\s*[A-z]+\\.*[A-z]*\\s*\\|\\s*[A-z]{1,}\\s*}}', 'g').test(string)) {
@@ -167,7 +168,9 @@ class Parser{
     public getСurrentDataEach() : any{
         return this.currentDataEach;
     }
-
+    public getCollectionElements(){
+        return this.collectionElements;
+    }
 
 
     public setToogle(bool : boolean): void {

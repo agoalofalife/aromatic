@@ -7,8 +7,13 @@ import entityMap from '../Maps/EntityMap';
  */
 function normalizeText(text : string) : string {
     text           =  text.replace(/\n/g, '');
-    let regexSpace = `${text.match(/>(\s+)</)[1]}`;
-    text           =  text.replace( new RegExp(regexSpace, 'g'), '');
+
+    let regex      =  text.match(/>(\s+)</);
+    if ( regex !== null) {
+        let regexSpace = `${text.match(/>(\s+)</)[1]}`;
+        text           =  text.replace( new RegExp(regexSpace, 'g'), '');
+    }
+
     return text;
 }
 

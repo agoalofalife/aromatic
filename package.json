@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/Aromatic.ts",
   "scripts": {
-    "test": "mocha",
-    "pretest": "tsc test/*Test.ts",
+    "test": "mocha --recursive ",
+    "pretest": "tsc test/**/*Test.ts",
     "prepublish": "typings install"
   },
   "dependencies": {

@@ -10,10 +10,10 @@ import {isNotUndefined}            from '../Support/IsType';
  * @method      transform           the basic method for all types  Element
  */
 class FilterElement extends Element implements ITypeElement{
-    private regexPutMustache  : string  = '{{([A-z]+\\.?[A-z]+)\\s*\\|\\s*([A-z]+)}}';
+    private regexPutMustache  : string  = '{{\\s*([A-z]+\\.?[A-z]+)\\s*\\|\\s*([A-z]+)\\s*}}';
 
     public transform() : string{
-
+            console.log(  this.getOriginalString() );
             let NameFilterFunction                    =    this.getOriginalString().match(this.regexPutMustache)[2];
             let valueInBrackets     : string          =    this.getOriginalString().match(this.regexPutMustache)[1];
 
