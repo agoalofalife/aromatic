@@ -10,11 +10,23 @@ To use it is quite simple and trivial.
 **To communicate you need to remember just two calls**
 
 
-*
-*How to install?**
+**How to install?**
+
 ```
 npm install aromatic
 ```
+
+| Expression | How to use | Read more |
+|--------------------	|:-------------------------------------------------:	|----------:	|
+| {{ value }} | Insert the values from the object the first level | |
+| {{ !!value!! }} | Insert the value of the first level with tagged | |
+| {{ value.value }} | Insert nested objects, following levels | |
+| {{ #each array }} | Through data loop over array of objects | |
+| {{ /each }} | The end of loop | |
+| {{ #if contecxt }} | If the current context is present | |
+| {{ /if }} | the end conditions | |
+| {{ #else }} | otherwise, if the current context does not have | |
+
 ```
 // index.js import Aromatic from './src/Aromatic';
 
@@ -170,7 +182,6 @@ return test.test.toLowerCase();
 </div>
 
 ```
-
 
 
 

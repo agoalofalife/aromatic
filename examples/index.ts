@@ -1,4 +1,4 @@
-import Aromatic from './src/Aromatic';
+import Aromatic from '../src/Aromatic';
 
 let node = document.querySelector('#test');
 
