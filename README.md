@@ -1,4 +1,4 @@
-![](http://i12.pixs.ru/storage/6/8/5/cat1000x50_1655040_24826685.jpg)
+![](http://i12.pixs.ru/storage/6/9/6/cat1000x50_7197344_24826696.jpg)
 #Aromatic
 ## **What is it?**
 
