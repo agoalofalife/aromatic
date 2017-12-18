@@ -1,5 +1,4 @@
-![](http://i12.pixs.ru/storage/6/9/6/cat1000x50_7197344_24826696.jpg)
-#Aromatic
+## Aromatic
 ## **What is it?**
 
 This is templates with elements [mustache](http://mustache.github.io/) and similar to [handlebars](http://handlebarsjs.com/)
